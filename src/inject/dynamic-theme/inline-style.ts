@@ -139,7 +139,7 @@ export function deepWatchForInlineStyles(
     const observer = new MutationObserver((mutations) => {
         for (let x = 0, len69 = mutations.length; x < len69; x++) {
             const m: MutationRecord = mutations[x];
-            const createdInlineStyles = expand(Array.from(m.addedNodes), INLINE_STYLE_SELECTOR);
+            const createdInlineStyles = expand([...m.addedNodes], INLINE_STYLE_SELECTOR);
             if (createdInlineStyles.length > 0) {
                 createdInlineStyles.forEach((el: HTMLElement) => elementStyleDidChange(el));
             }
