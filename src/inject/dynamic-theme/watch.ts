@@ -112,31 +112,38 @@ export function watchForStyleChanges(update: (styles: ChangedStyles) => void) {
         const additions = new Set<Node>();
         const deletions = new Set<Node>();
         const styleUpdates = new Set<HTMLLinkElement | HTMLStyleElement>();
-        mutations.forEach((m) => {
-            m.addedNodes.forEach((n) => additions.add(n));
-            m.removedNodes.forEach((n) => deletions.add(n));
+        for (let mut = 0, len = mutations.length; mut < len; mut++) {
+            const m: MutationRecord = mutations[mut];
+            for (let an = 0, len2 = m.addedNodes.length; an < len2; an++) {
+                additions.add(m.addedNodes[an]);
+            }
+            for (let an = 0, len3 = m.removedNodes.length; an < len3; an++) {
+                deletions.add(m.removedNodes[an]);
+            }
             if (m.type === 'attributes' && shouldManageStyle(m.target)) {
                 styleUpdates.add(m.target as HTMLLinkElement | HTMLStyleElement);
             }
-        });
-        const styleAdditions = getAllManageableStyles([...additions]);
-        const styleDeletions = getAllManageableStyles([...deletions]);
-        additions.forEach((n) => {
-            iterateShadowNodes(n, (host) => {
+        }
+        const aArray = [...additions];
+        const dArray = [...deletions];
+        const styleAdditions = getAllManageableStyles(aArray);
+        const styleDeletions = getAllManageableStyles(dArray);
+        for (let aa = 0, len4 = aArray.length; aa < len4; aa++)          {
+            iterateShadowNodes(aArray[aa], (host) => {
                 const shadowStyles = getAllManageableStyles([...host.shadowRoot.children]);
                 if (shadowStyles.length > 0) {
                     styleAdditions.push(...shadowStyles);
                 }
             });
-        });
-        deletions.forEach((n) => {
-            iterateShadowNodes(n, (host) => {
+        }
+        for (let dd = 0, len5 = dArray.length; dd < len5; dd++) {
+            iterateShadowNodes(dArray[dd], (host) => {
                 const shadowStyles = getAllManageableStyles([...host.shadowRoot.children]);
                 if (shadowStyles.length > 0) {
-                    styleDeletions.push(...shadowStyles);
+                    styleAdditions.push(...shadowStyles);
                 }
             });
-        });
+        }
 
         styleDeletions.forEach((style) => {
             if (style.isConnected) {
