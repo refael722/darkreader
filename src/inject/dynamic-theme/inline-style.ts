@@ -104,14 +104,15 @@ export function getInlineOverrideStyle() {
 
 function expand(nodes: Node[], selector: string) {
     const results: Node[] = [];
-    nodes.forEach((n) => {
+    for (let x = 0, len = nodes.length; x < len; x++) {
+        const n = nodes[x];
         if (n instanceof Element) {
             if (n.matches(selector)) {
                 results.push(n);
             }
-            results.push(...Array.from(n.querySelectorAll(selector)));
+            results.push(...n.querySelectorAll(selector));
         }
-    });
+    }
     return results;
 }
 
