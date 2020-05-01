@@ -5,9 +5,11 @@ export function iterateCSSRules(rules: CSSRuleList, iterate: (rule: CSSStyleRule
     for (let x = 0, len = rules.length; x < len; x++) {
         const rule = rules[x];
         if (rule instanceof CSSMediaRule) {
-            const media = Array.prototype.splice.call(rule.media);
-            if (media.includes('screen') || media.includes('all') || !(media.includes('print') || media.includes('speech'))) {
-                iterateCSSRules(rule.cssRules, iterate);
+            for (let y = 0, len1 = rule.media.length; y < len1; y++) {
+                const media = rule.media[y];
+                if (media.includes('screen') || media.includes('all') || !(media.includes('print') || media.includes('speech'))) {
+                    iterateCSSRules(rule.cssRules, iterate);
+                }
             }
         } else if (rule instanceof CSSStyleRule) {
             iterate(rule);
@@ -24,8 +26,9 @@ export function iterateCSSRules(rules: CSSRuleList, iterate: (rule: CSSStyleRule
 }
 
 export function iterateCSSDeclarations(style: CSSStyleDeclaration, iterate: (property: string, value: string) => void) {
-    for (let x = 0, len = style.length; x < len; x++) {
-        const property = style[x];
+    const array = Array.from(style);
+    for (let x = 0, len = array.length; x < len; x++) {
+        const property = array[x];
         const value = style.getPropertyValue(property).trim();
         if (!value) {
             return;
