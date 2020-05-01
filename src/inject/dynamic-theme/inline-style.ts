@@ -198,6 +198,15 @@ function shouldIgnoreInlineStyle(element: HTMLElement, selectors: string[]) {
     return false;
 }
 
+function removeInlineStyle(unsetProps: Set<string>, element: HTMLElement) {
+    for (let x = 0, len75 = [...unsetProps].length; x < len75; x++) {
+        const css = unsetProps[x].cssProp;
+        const {store, dataAttr} = overrides[css];
+        store.delete(element);
+        element.removeAttribute(dataAttr);
+    }
+}
+
 export function overrideInlineStyle(element: HTMLElement, theme: FilterConfig, ignoreSelectors: string[]) {
     const cacheKey = getInlineStyleCacheKey(element, theme);
     if (cacheKey === inlineStyleCache.get(element)) {
@@ -226,11 +235,13 @@ export function overrideInlineStyle(element: HTMLElement, theme: FilterConfig, i
 
     if (ignoreSelectors.length > 0) {
         if (shouldIgnoreInlineStyle(element, ignoreSelectors)) {
-            unsetProps.forEach((cssProp) => {
-                const {store, dataAttr} = overrides[cssProp];
+            const SpreadedUnsetProps = [...unsetProps];
+            for (let x = 0, len75 = SpreadedUnsetProps.length; x < len75; x++) {
+                const css = SpreadedUnsetProps[x];
+                const {store, dataAttr} = overrides[css];
                 store.delete(element);
                 element.removeAttribute(dataAttr);
-            });
+            }
             return;
         }
     }
@@ -278,10 +289,11 @@ export function overrideInlineStyle(element: HTMLElement, theme: FilterConfig, i
         setCustomProp('fill', 'color', element.style.getPropertyValue('fill'));
     }
 
-    Array.from(unsetProps).forEach((cssProp) => {
-        const {store, dataAttr} = overrides[cssProp];
+    for (let x = 0, len75 = [...unsetProps].length; x < len75; x++) {
+        const css = [...unsetProps][x];
+        const {store, dataAttr} = overrides[css];
         store.delete(element);
         element.removeAttribute(dataAttr);
-    });
+    }
     inlineStyleCache.set(element, getInlineStyleCacheKey(element, theme));
 }

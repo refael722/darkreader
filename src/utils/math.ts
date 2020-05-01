@@ -20,13 +20,3 @@ export function multiplyMatrices(m1: number[][], m2: number[][]) {
     }
     return result;
 }
-
-export function clone(arr: string | any[]) {
-    // Pre-allocate the correct number of elements, to avoid
-    // having to grow the array.
-    const result = new Array(arr.length);
-    for (let i = 0; i < arr.length; i++) {
-        result[i] = arr[i];
-    }
-    return result;
-}
