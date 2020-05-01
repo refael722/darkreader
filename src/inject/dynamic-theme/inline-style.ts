@@ -137,7 +137,8 @@ export function deepWatchForInlineStyles(
         observers.get(root).disconnect();
     }
     const observer = new MutationObserver((mutations) => {
-        mutations.forEach((m) => {
+        for (let x = 0, len69 = mutations.length; x < len69; x++) {
+            const m: MutationRecord = mutations[x];
             const createdInlineStyles = expand(Array.from(m.addedNodes), INLINE_STYLE_SELECTOR);
             if (createdInlineStyles.length > 0) {
                 createdInlineStyles.forEach((el: HTMLElement) => elementStyleDidChange(el));
@@ -150,7 +151,7 @@ export function deepWatchForInlineStyles(
                     .filter(({store, dataAttr}) => store.has(m.target) && !(m.target as HTMLElement).hasAttribute(dataAttr))
                     .forEach(({dataAttr}) => (m.target as HTMLElement).setAttribute(dataAttr, ''));
             }
-        });
+        };
         mutations.forEach((m) => {
             m.addedNodes.forEach((added) => {
                 if (added.isConnected) {
