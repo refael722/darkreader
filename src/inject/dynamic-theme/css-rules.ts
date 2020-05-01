@@ -2,8 +2,8 @@ import {parseURL, getAbsoluteURL} from './url';
 import {logWarn} from '../utils/log';
 
 export function iterateCSSRules(rules: CSSRuleList, iterate: (rule: CSSStyleRule) => void) {
-    Array.from(rules)
-        .forEach((rule) => {
+        for (var x = 0, len = rules.length; x < len; x++) {
+            const rule = rules[x];
             if (rule instanceof CSSMediaRule) {
                 const media = Array.from(rule.media);
                 if (media.includes('screen') || media.includes('all') || !(media.includes('print') || media.includes('speech'))) {
@@ -20,7 +20,7 @@ export function iterateCSSRules(rules: CSSRuleList, iterate: (rule: CSSStyleRule
             } else {
                 logWarn(`CSSRule type not supported`, rule);
             }
-        });
+        }
 }
 
 export function iterateCSSDeclarations(style: CSSStyleDeclaration, iterate: (property: string, value: string) => void) {
