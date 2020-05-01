@@ -11,9 +11,10 @@ interface ChangedStyles {
     moved: (HTMLStyleElement | HTMLLinkElement)[];
 }
 
-function getAllManageableStyles(nodes: Iterable<Node> | ArrayLike<Node>) {
+function getAllManageableStyles(nodes: Array<Node>) {
     const results: (HTMLLinkElement | HTMLStyleElement)[] = [];
-    Array.from(nodes).forEach((node) => {
+    for (let n = 0, len = nodes.length; n < len; n++) {
+        const node = nodes[n];
         if (node instanceof Element) {
             if (shouldManageStyle(node)) {
                 results.push(node as HTMLLinkElement | HTMLStyleElement);
@@ -26,7 +27,7 @@ function getAllManageableStyles(nodes: Iterable<Node> | ArrayLike<Node>) {
                 ).filter(shouldManageStyle)
             );
         }
-    });
+    }
     return results;
 }
 
@@ -118,11 +119,11 @@ export function watchForStyleChanges(update: (styles: ChangedStyles) => void) {
                 styleUpdates.add(m.target as HTMLLinkElement | HTMLStyleElement);
             }
         });
-        const styleAdditions = getAllManageableStyles(additions);
-        const styleDeletions = getAllManageableStyles(deletions);
+        const styleAdditions = getAllManageableStyles([...additions]);
+        const styleDeletions = getAllManageableStyles([...deletions]);
         additions.forEach((n) => {
             iterateShadowNodes(n, (host) => {
-                const shadowStyles = getAllManageableStyles(host.shadowRoot.children);
+                const shadowStyles = getAllManageableStyles([...host.shadowRoot.children]);
                 if (shadowStyles.length > 0) {
                     styleAdditions.push(...shadowStyles);
                 }
@@ -130,7 +131,7 @@ export function watchForStyleChanges(update: (styles: ChangedStyles) => void) {
         });
         deletions.forEach((n) => {
             iterateShadowNodes(n, (host) => {
-                const shadowStyles = getAllManageableStyles(host.shadowRoot.children);
+                const shadowStyles = getAllManageableStyles([...host.shadowRoot.children]);
                 if (shadowStyles.length > 0) {
                     styleDeletions.push(...shadowStyles);
                 }
