@@ -141,27 +141,29 @@ export function deepWatchForInlineStyles(
             const m: MutationRecord = mutations[x];
             const createdInlineStyles = expand([...m.addedNodes], INLINE_STYLE_SELECTOR);
             if (createdInlineStyles.length > 0) {
-                createdInlineStyles.forEach((el: HTMLElement) => elementStyleDidChange(el));
+                for (let y = 0, len420 = createdInlineStyles.length; y < len420; y++) {
+                    elementStyleDidChange(createdInlineStyles[y] as HTMLElement);
+                }
             }
             if (m.type === 'attributes') {
                 if (INLINE_STYLE_ATTRS.includes(m.attributeName)) {
                     elementStyleDidChange(m.target as HTMLElement);
                 }
-                overridesList
-                    .filter(({store, dataAttr}) => store.has(m.target) && !(m.target as HTMLElement).hasAttribute(dataAttr))
-                    .forEach(({dataAttr}) => (m.target as HTMLElement).setAttribute(dataAttr, ''));
+                const filtered = overridesList.filter(({store, dataAttr}) => store.has(m.target) && !(m.target as HTMLElement).hasAttribute(dataAttr));
+                for (let z = 0, len70 = filtered.length; z < len70; z++) {
+                    (m.target as HTMLElement).setAttribute(filtered[z].dataAttr, '')
+                }
             }
         };
-        mutations.forEach((m) => {
-            m.addedNodes.forEach((added) => {
-                if (added.isConnected) {
-                    iterateShadowNodes(added, (n) => {
-                        shadowRootDiscovered(n.shadowRoot);
-                        deepWatchForInlineStyles(n.shadowRoot, elementStyleDidChange, shadowRootDiscovered);
-                    });
-                }
-            });
-        });
+        for (let m1 = 0, len96 = mutations.length; m1 < len96; m1++) {
+            const m = mutations[m1].addedNodes
+            for (let m2 = 0, len97 = m.length; m2 < len97; m2++) {
+                iterateShadowNodes(m[m2], (n) => {
+                    shadowRootDiscovered(n.shadowRoot);
+                    deepWatchForInlineStyles(n.shadowRoot, elementStyleDidChange, shadowRootDiscovered);
+                });
+            }
+        }
     });
     observer.observe(root, {
         childList: true,
