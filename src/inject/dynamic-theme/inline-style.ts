@@ -151,12 +151,12 @@ export function deepWatchForInlineStyles(
                 }
                 const filtered = overridesList.filter(({store, dataAttr}) => store.has(m.target) && !(m.target as HTMLElement).hasAttribute(dataAttr));
                 for (let z = 0, len70 = filtered.length; z < len70; z++) {
-                    (m.target as HTMLElement).setAttribute(filtered[z].dataAttr, '')
+                    (m.target as HTMLElement).setAttribute(filtered[z].dataAttr, '');
                 }
             }
         };
         for (let m1 = 0, len96 = mutations.length; m1 < len96; m1++) {
-            const m = mutations[m1].addedNodes
+            const m = mutations[m1].addedNodes;
             for (let m2 = 0, len97 = m.length; m2 < len97; m2++) {
                 iterateShadowNodes(m[m2], (n) => {
                     shadowRootDiscovered(n.shadowRoot);
@@ -196,15 +196,6 @@ function shouldIgnoreInlineStyle(element: HTMLElement, selectors: string[]) {
         }
     }
     return false;
-}
-
-function removeInlineStyle(unsetProps: Set<string>, element: HTMLElement) {
-    for (let x = 0, len75 = [...unsetProps].length; x < len75; x++) {
-        const css = unsetProps[x].cssProp;
-        const {store, dataAttr} = overrides[css];
-        store.delete(element);
-        element.removeAttribute(dataAttr);
-    }
 }
 
 export function overrideInlineStyle(element: HTMLElement, theme: FilterConfig, ignoreSelectors: string[]) {

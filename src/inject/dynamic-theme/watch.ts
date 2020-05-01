@@ -38,21 +38,22 @@ function collectUndefinedElements(root: ParentNode) {
     if (!isDefinedSelectorSupported()) {
         return;
     }
-    root.querySelectorAll(':not(:defined)')
-        .forEach((el) => {
-            const tag = el.tagName.toLowerCase();
-            if (!undefinedGroups.has(tag)) {
-                undefinedGroups.set(tag, new Set());
-                customElementsWhenDefined(tag).then(() => {
-                    if (elementsDefinitionCallback) {
-                        const elements = undefinedGroups.get(tag);
-                        undefinedGroups.delete(tag);
-                        elementsDefinitionCallback(Array.from(elements));
-                    }
-                });
-            }
-            undefinedGroups.get(tag).add(el);
-        });
+    const querySelector = root.querySelectorAll(':not(:defined)');
+    for (let x = 0, len18 = querySelector.length; x < len18; x++) {
+        const el = querySelector[x];
+        const tag = el.tagName.toLowerCase();
+        if (!undefinedGroups.has(tag)) {
+            undefinedGroups.set(tag, new Set());
+            customElementsWhenDefined(tag).then(() => {
+                if (elementsDefinitionCallback) {
+                    const elements = undefinedGroups.get(tag);
+                    undefinedGroups.delete(tag);
+                    elementsDefinitionCallback(Array.from(elements));
+                }
+            });
+        }
+        undefinedGroups.get(tag).add(el);
+    }
 }
 
 function customElementsWhenDefined(tag: string) {
@@ -128,7 +129,7 @@ export function watchForStyleChanges(update: (styles: ChangedStyles) => void) {
         const dArray = [...deletions];
         const styleAdditions = getAllManageableStyles(aArray);
         const styleDeletions = getAllManageableStyles(dArray);
-        for (let aa = 0, len4 = aArray.length; aa < len4; aa++)          {
+        for (let aa = 0, len4 = aArray.length; aa < len4; aa++) {
             iterateShadowNodes(aArray[aa], (host) => {
                 const shadowStyles = getAllManageableStyles([...host.shadowRoot.children]);
                 if (shadowStyles.length > 0) {
